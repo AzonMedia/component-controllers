@@ -17,7 +17,7 @@ use GuzabaPlatform\Platform\Routes\Controllers\Routes;
 
 /**
  * Class Component
- * @package Azonmedia\Tags
+ * @package GuzabaPlatform\Controllers
  */
 class Component extends BaseComponent implements ComponentInterface, ComponentInitializationInterface
 {
@@ -30,7 +30,7 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
 
     protected const CONFIG_RUNTIME = [];
 
-    protected const COMPONENT_NAME = "CRUD";
+    protected const COMPONENT_NAME = "Controllers";
     //https://components.platform.guzaba.org/component/{vendor}/{component}
     protected const COMPONENT_URL = 'https://components.platform.guzaba.org/component/guzaba-platform/controllers';
     //protected const DEV_COMPONENT_URL//this should come from composer.json
@@ -61,18 +61,18 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
             'name'  => 'Controllers',
             'meta' => [
                 'in_navigation' => TRUE, //to be shown in the admin navigation
-                'additional_template' => '@GuzabaPlatform.Controllers/NavigationHook.vue',//here the list of classes will be expanded
+                'additional_template' => '@GuzabaPlatform.Controllers/ControllersNavigationHook.vue',//here the list of classes will be expanded
             ],
         ];
-        $FrontendRouter->{'/admin'}->add('crud', '@GuzabaPlatform.Controllers/Controllers.vue' ,$additional);
+        $FrontendRouter->{'/admin'}->add('controllers', '@GuzabaPlatform.Controllers/ControllersAdmin.vue' ,$additional);
 
         $additional = [
             'name'  => 'Controller Method (action)',
             'meta' => [
-                'additional_template' => '@GuzabaPlatform.Crud/NavigationHook.vue',//here the list of classes will be expanded
+                'additional_template' => '@GuzabaPlatform.Controllers/ControllersNavigationHook.vue',//here the list of classes will be expanded
             ],
         ];
-        $FrontendRouter->{'/admin'}->add('controller/:class/:method', '@GuzabaPlatform.Controllers/Controllers.vue', $additional);
+        $FrontendRouter->{'/admin'}->add('controllers/:class/:method', '@GuzabaPlatform.Controllers/ControllersAdmin.vue', $additional);
     }
 
 }
