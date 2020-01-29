@@ -72,7 +72,7 @@ class Component extends BaseComponent implements ComponentInterface, ComponentIn
                 'additional_template' => '@GuzabaPlatform.Controllers/ControllersNavigationHook.vue',//here the list of classes will be expanded
             ],
         ];
-        $FrontendRouter->{'/admin'}->add('controllers/:class/:method', '@GuzabaPlatform.Controllers/ControllersAdmin.vue', $additional);
+        $FrontendRouter->{'/admin'}->add('controllers/:class', '@GuzabaPlatform.Controllers/ControllersAdmin.vue', $additional);
     }
 
 }
