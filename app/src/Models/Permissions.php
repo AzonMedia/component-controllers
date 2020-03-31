@@ -5,13 +5,19 @@ namespace GuzabaPlatform\Controllers\Models;
 
 use Guzaba2\Authorization\Acl\Permission;
 use Guzaba2\Base\Base;
+use Guzaba2\Base\Exceptions\InvalidArgumentException;
+use Guzaba2\Base\Exceptions\RunTimeException;
+use Guzaba2\Database\Interfaces\ConnectionInterface;
+use Guzaba2\Kernel\Kernel;
+use Guzaba2\Orm\Store\Sql\Mysql;
 use GuzabaPlatform\Platform\Application\MysqlConnectionCoroutine;
 
 class Permissions extends Base
 {
     protected const CONFIG_DEFAULTS = [
         'services'      => [
-            'ConnectionFactory'
+            'ConnectionFactory',
+            'MysqlOrmStore',
         ],
     ];
 
@@ -20,13 +26,16 @@ class Permissions extends Base
     /**
      * Returns the permissions of the controllers.
      * @param string $class_name
-     * @param string $action_name
      * @return mixed
-     * @throws \Guzaba2\Base\Exceptions\RunTimeException
+     * @throws \Azonmedia\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws RunTimeException
+     * @throws \ReflectionException
      */
     //public static function get_permissions(string $class_name, string $action_name)
     public static function get_permissions(string $class_name) : iterable
     {
+        /** @var ConnectionInterface $Connection */
         $Connection = self::get_service('ConnectionFactory')->get_connection(MysqlConnectionCoroutine::class, $ScopeReference);
 
         $q = "
@@ -41,7 +50,7 @@ LEFT JOIN
     ON
         acl_permissions.role_id = roles.role_id
     AND
-        acl_permissions.class_name = :class_name
+        acl_permissions.class_id = :class_id
     AND
         acl_permissions.object_id IS NULL
 LEFT JOIN
@@ -53,19 +62,24 @@ LEFT JOIN
     ON
         meta.meta_object_id = acl_permissions.permission_id
     AND
-        meta.meta_class_name = :meta_class_name
+        meta.meta_class_id = :meta_class_id
 -- WHERE
 --    (users.user_id IS NULL OR users.user_id = 1)
 ORDER BY
     roles.role_name
 ";
+        //meta.meta_class_name = :meta_class_name
+        //acl_permissions.class_name = :class_name
 
-        $data = $Connection->prepare($q)->execute(['class_name' => $class_name, 'meta_class_name' => Permission::class])->fetchAll();
+        //$data = $Connection->prepare($q)->execute(['class_name' => $class_name, 'meta_class_name' => Permission::class])->fetchAll();
+        /** @var Mysql $MysqlOrmStore */
+        $MysqlOrmStore = self::get_service('MysqlOrmStore');
+        $data = $Connection->prepare($q)->execute(['class_id' => $MysqlOrmStore->get_class_id($class_name), 'meta_class_id' => $MysqlOrmStore->get_class_id(Permission::class) ] )->fetchAll();
 
         $ret = [];
         //$object_actions = $class_name::get_class_actions();
         $object_actions = $class_name::get_actions();
-        print_r($object_actions);
+
         foreach ($data as $row) {
             if (!array_key_exists($row['role_id'], $ret)) {
                 $ret[$row['role_id']]['role_id'] = $row['role_id'];
