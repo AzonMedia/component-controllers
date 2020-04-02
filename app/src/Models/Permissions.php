@@ -12,12 +12,16 @@ use Guzaba2\Kernel\Kernel;
 use Guzaba2\Orm\Store\Sql\Mysql;
 use GuzabaPlatform\Platform\Application\MysqlConnectionCoroutine;
 
+/**
+ * Class Permissions
+ * @package GuzabaPlatform\Controllers\Models
+ */
 class Permissions extends Base
 {
     protected const CONFIG_DEFAULTS = [
         'services'      => [
             'ConnectionFactory',
-            'MysqlOrmStore',
+            'MysqlOrmStore',//needed because the get_class_id() method is used
         ],
     ];
 
