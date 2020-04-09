@@ -9,12 +9,13 @@ use Guzaba2\Kernel\Kernel;
 use Guzaba2\Mvc\ActiveRecordController;
 use Guzaba2\Orm\ActiveRecord;
 
-class Controllers extends Base
+abstract class Controllers extends Base
 {
     /**
      * Returns a tree of all ActiveRecord classes that are not controllers ActiveRecordController
      * @return array
      * @throws \ReflectionException
+     * @throws \Guzaba2\Base\Exceptions\InvalidArgumentException
      */
     public static function get_tree()
     {

@@ -16,7 +16,7 @@ use GuzabaPlatform\Platform\Application\MysqlConnectionCoroutine;
  * Class Permissions
  * @package GuzabaPlatform\Controllers\Models
  */
-class Permissions extends Base
+abstract class Permissions extends Base
 {
     protected const CONFIG_DEFAULTS = [
         'services'      => [
@@ -40,7 +40,7 @@ class Permissions extends Base
     public static function get_permissions(string $class_name) : iterable
     {
         /** @var ConnectionInterface $Connection */
-        $Connection = self::get_service('ConnectionFactory')->get_connection(MysqlConnectionCoroutine::class, $ScopeReference);
+        $Connection = self::get_service('ConnectionFactory')->get_connection(MysqlConnectionCoroutine::class, $CR);
 
         $q = "
 SELECT
