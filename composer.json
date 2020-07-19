@@ -4,7 +4,7 @@
     "description": "GuzabaPlatform controllers component",
     "keywords": ["crud"],
     "homepage": "https://github.com/AzonMedia/component-controllers",
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "minimum-stability": "dev",
     "authors": [
         {
