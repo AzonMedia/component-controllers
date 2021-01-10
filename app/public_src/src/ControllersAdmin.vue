@@ -32,27 +32,27 @@
                         </template>
 <!--
                         <template v-slot:cell(create_granted)="row">
-                            <b-form-checkbox :value="row.item.create_granted" :unchecked-value="0" @change="tooglePermission(row.item, 'create')" v-model="row.item.create_granted"></b-form-checkbox>
+                            <b-form-checkbox :value="row.item.create_granted" :unchecked-value="0" @change="togglePermission(row.item, 'create')" v-model="row.item.create_granted"></b-form-checkbox>
                         </template>
 
                         <template v-slot:cell(read_granted)="row">
-                            <b-form-checkbox :value="row.item.read_granted" :unchecked-value="0" @change="tooglePermission(row.item, 'read')" v-model="row.item.read_granted"></b-form-checkbox>
+                            <b-form-checkbox :value="row.item.read_granted" :unchecked-value="0" @change="togglePermission(row.item, 'read')" v-model="row.item.read_granted"></b-form-checkbox>
                         </template>
 
                         <template v-slot:cell(write_granted)="row">
-                            <b-form-checkbox :value="row.item.write_granted" :unchecked-value="0" @change="tooglePermission(row.item, 'write')" v-model="row.item.write_granted"></b-form-checkbox>
+                            <b-form-checkbox :value="row.item.write_granted" :unchecked-value="0" @change="togglePermission(row.item, 'write')" v-model="row.item.write_granted"></b-form-checkbox>
                         </template>
 
                         <template v-slot:cell(delete_granted)="row">
-                            <b-form-checkbox :value="row.item.delete_granted" :unchecked-value="0" @change="tooglePermission(row.item, 'delete')" v-model="row.item.delete_granted"></b-form-checkbox>
+                            <b-form-checkbox :value="row.item.delete_granted" :unchecked-value="0" @change="togglePermission(row.item, 'delete')" v-model="row.item.delete_granted"></b-form-checkbox>
                         </template>
 
                         <template v-slot:cell(grant_permission_granted)="row">
-                            <b-form-checkbox :value="row.item.grant_permission_granted" :unchecked-value="0" @change="tooglePermission(row.item, 'grant_permission')" v-model="row.item.grant_permission_granted"></b-form-checkbox>
+                            <b-form-checkbox :value="row.item.grant_permission_granted" :unchecked-value="0" @change="togglePermission(row.item, 'grant_permission')" v-model="row.item.grant_permission_granted"></b-form-checkbox>
                         </template>
 
                         <template v-slot:cell(revoke_permission_granted)="row">
-                            <b-form-checkbox :value="row.item.revoke_permission_granted" :unchecked-value="0" @change="tooglePermission(row.item, 'revoke_permission')" v-model="row.item.revoke_permission_granted"></b-form-checkbox>
+                            <b-form-checkbox :value="row.item.revoke_permission_granted" :unchecked-value="0" @change="togglePermission(row.item, 'revoke_permission')" v-model="row.item.revoke_permission_granted"></b-form-checkbox>
                         </template>
 -->
                     </b-table>
@@ -212,14 +212,14 @@
                 // });
                 this.$http.get('/admin/permissions-controllers/' + this.selectedClassName.split('\\').join('-') )
                     .then(resp => {
-                        self.items_permissions = Object.values(resp.data.items);
-                        //self.fields_permissions = self.fields_permissions_base;//wrong - changes the reference and does while a clone is needed.
+                        this.items_permissions = Object.values(resp.data.items);
+                        //this.fields_permissions = this.fields_permissions_base;//wrong - changes the reference and does while a clone is needed.
                         // https://www.samanthaming.com/tidbits/70-3-ways-to-clone-objects/
-                        //self.fields_permissions = Object.assign({}, self.fields_permissions_base);//reset the columns // wrong as produces Object not Array
-                        //self.fields_permissions = { ...self.fields_permissions_base};//wrong - produces object not Array
-                        self.fields_permissions = JSON.parse(JSON.stringify(self.fields_permissions_base)) //deep clone and produce again Array
-                        for (let action_name in self.items_permissions[0].permissions) {
-                            self.fields_permissions.push({
+                        //this.fields_permissions = Object.assign({}, this.fields_permissions_base);//reset the columns // wrong as produces Object not Array
+                        //this.fields_permissions = { ...this.fields_permissions_base};//wrong - produces object not Array
+                        this.fields_permissions = JSON.parse(JSON.stringify(this.fields_permissions_base)) //deep clone and produce again Array
+                        for (let action_name in this.items_permissions[0].permissions) {
+                            this.fields_permissions.push({
                                 key: action_name,
                                 label: action_name,
                                 sortable: true,
@@ -227,19 +227,18 @@
                         }
                     })
                     .catch(err => {
-                        console.log(err);
-                        self.requestError = err;
-                        self.items_permissions = [];
-                    }).finally(function(){
-                    self.$bvModal.show('class-permissions');
-                });
+                        this.requestError = err
+                        this.items_permissions = []
+                    }).finally(() => {
+                        this.$bvModal.show('class-permissions')
+                    })
 
             },
 
-            tooglePermission(row, action, checked){
+            togglePermission(row, action, checked){
                 this.isBusy_permission = true;
                 let sendValues = {};
-                let url = '/acl-permissions';
+                let url = '/acl-permission';
 
                 if (row[action + '_granted']) {
                     //let object_uuid = row[action + '_granted'];
@@ -254,14 +253,12 @@
                     sendValues.object_id = null;
                 }
 
-                var self = this;
-
                 this.$http({
-                    method: this.action,
-                    url: url,
-                    //data: this.$stringify(sendValues)
-                    data: sendValues
-                })
+                        method: this.action,
+                        url: url,
+                        //data: this.$stringify(sendValues)
+                        data: sendValues
+                    })
                     .then(resp => {
                         this.$bvToast.toast(resp.data.message, {
                             // title: '',
@@ -285,9 +282,9 @@
                         //self.requestError = err;
 
                     })
-                    .finally(function(){
-                        self.showPermissions(self.selectedObject)
-                        self.isBusy_permission = false;
+                    .finally(() => {
+                        this.showPermissions(this.selectedObject)
+                        this.isBusy_permission = false;
                     });
                     // .catch(err => {
                     //     console.log(err);
@@ -304,10 +301,16 @@
         watch:{
             $route (to, from) { // needed because by default no class is loaded and when it is loaded the component for the two routes is the same.
                 this.selectedClassName = this.$route.params.class.split('-').join('\\');
-                this.showPermissions(self.selectedClassName)
+                this.showPermissions(this.selectedClassName)
 
             }
         },
+        mounted() {
+            this.selectedClassName = this.$route.params.class.split('-').join('\\');
+            if (this.selectedClassName) {
+                this.showPermissions(this.selectedClassName)
+            }
+        }
     };
 
 </script>
