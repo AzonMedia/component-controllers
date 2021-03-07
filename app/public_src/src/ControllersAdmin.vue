@@ -306,10 +306,13 @@
             }
         },
         mounted() {
-            this.selectedClassName = this.$route.params.class.split('-').join('\\');
-            if (this.selectedClassName) {
-                this.showPermissions(this.selectedClassName)
+            if (this.$route.params.class) {
+                this.selectedClassName = this.$route.params.class.split('-').join('\\');
+                if (this.selectedClassName) {
+                    this.showPermissions(this.selectedClassName)
+                }
             }
+
         }
     };
 
