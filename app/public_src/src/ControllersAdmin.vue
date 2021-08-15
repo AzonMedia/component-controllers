@@ -15,7 +15,7 @@
                         body-bg-variant="light"
                         body-text-variant="dark"
                         hide-footer
-                        size="lg"
+                        size="xl"
                 >
                     <b-table
                             striped
@@ -221,7 +221,8 @@
                         for (let action_name in this.items_permissions[0].permissions) {
                             this.fields_permissions.push({
                                 key: action_name,
-                                label: action_name,
+                                //label: action_name,
+                                label: this.$options.filters.humanize(action_name),
                                 sortable: true,
                             });
                         }
